@@ -18,3 +18,5 @@ def test_saved_user_will_be_returned():
 
     assert_that(fetched_user).is_not_none()
     assert_that(fetched_user).is_equal_to(user)
+    assert_that(fetched_user.first_name).is_equal_to(user.first_name)
+    assert_that(fetched_user.last_name).is_equal_to(user.last_name)

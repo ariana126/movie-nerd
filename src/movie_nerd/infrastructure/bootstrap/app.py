@@ -1,8 +1,9 @@
 from pydm import ServiceContainer, EnvParametersBag
 from dotenv import load_dotenv
 
-from movie_nerd.domain.service import UserRepository
+from movie_nerd.domain.service import UserRepository, ChatRepository
 from movie_nerd.infrastructure.persistence.sql_alchemy.connection import Connection
+from movie_nerd.infrastructure.persistence.sql_alchemy.repositories.chat_repository import SQLAlchemyChatRepository
 from movie_nerd.infrastructure.persistence.sql_alchemy.repositories.user_repository import SQLAlchemyUserRepository
 
 
@@ -23,3 +24,4 @@ class App:
         })
 
         service_container.bind(UserRepository, SQLAlchemyUserRepository)
+        service_container.bind(ChatRepository, SQLAlchemyChatRepository)
