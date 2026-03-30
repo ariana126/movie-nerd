@@ -1,11 +1,11 @@
 import os
+from pathlib import Path
 
 import pytest
 from alembic import command
 from alembic.config import Config
 from ddd import Identity
 from pydm import ServiceContainer
-from pathlib import Path
 
 from movie_nerd.infrastructure.bootstrap.app import App
 from movie_nerd.infrastructure.persistence.sql_alchemy.connection import Connection
@@ -23,6 +23,13 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 App.boot()
 service_container = ServiceContainer.get_instance()
 connection: Connection = service_container.get_service(Connection)
+
+try:
+    # If the DB isn't reachable, skip integration tests gracefully.
+    with connection.engine.connect() as conn:
+        conn.exec_driver_sql("SELECT 1")
+except Exception as exc:  # noqa: BLE001
+    pytest.skip(f"Integration DB not available: {exc}", allow_module_level=True)
 
 
 @pytest.fixture(scope="session", autouse=True)
