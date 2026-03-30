@@ -13,6 +13,8 @@ dependencies = [
     "sqlalchemy",
     "psycopg[binary]",
     "alembic",
+    "fastapi",
+    "uvicorn",
 ]
 
 [project.optional-dependencies]
