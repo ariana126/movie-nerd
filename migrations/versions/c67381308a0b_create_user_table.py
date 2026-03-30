@@ -10,7 +10,7 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 
-from movie_nerd.infrastructure.persistence.sql_alchemy.types import IdentityType
+from movie_nerd.infrastructure.persistence.sql_alchemy.orm import IdentityType
 
 # revision identifiers, used by Alembic.
 revision: str = 'c67381308a0b'

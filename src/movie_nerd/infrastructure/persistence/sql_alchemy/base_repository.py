@@ -12,7 +12,7 @@ class SQLAlchemyBaseRepository(EntityRepository, ABC):
         self.connection = connection
 
     def find(self, _id: Identity) -> AggregateRootType | None:
-        return self.connection.get_session().get(self.entity, _id.as_string)
+        return self.connection.get_session().get(self.entity, _id)
 
     def save(self, entity: AggregateRoot) -> None:
         session: Session = self.connection.get_session()

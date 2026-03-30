@@ -46,11 +46,8 @@ class Chat(AggregateRoot):
     @staticmethod
     def start(user_id: Identity, time: datetime) -> 'Chat':
         chat = Chat(Identity.new(), user_id, [], ChatStatus.STARTED, time)
-        chat.signal_start()
+        chat._record_that(ChatStarted(chat.id))
         return chat
-    # TODO: Should be fixed in underpy Encapsulated class
-    def signal_start(self) -> None:
-        self._record_that(ChatStarted(self._id))
 
     def send_user_message(self, content: str, time: datetime):
         message = ChatMessage(Identity.new(), Sender.USER, content, time)

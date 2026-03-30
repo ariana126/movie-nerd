@@ -9,7 +9,8 @@ from pydm import ServiceContainer
 
 from movie_nerd.infrastructure.bootstrap.app import App
 from movie_nerd.infrastructure.persistence.sql_alchemy.connection import Connection
-from movie_nerd.infrastructure.persistence.sql_alchemy.mappers import mapper_registry
+from movie_nerd.infrastructure.persistence.sql_alchemy.orm import Base
+from movie_nerd.infrastructure.persistence.sql_alchemy import models  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -30,7 +31,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = mapper_registry.metadata
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
