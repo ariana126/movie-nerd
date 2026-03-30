@@ -6,18 +6,14 @@ from pydm import ServiceContainer
 from ddd.test_double import StubClock
 
 from movie_nerd.domain import Chat, User
-from movie_nerd.domain.service import ChatRepository, UserRepository
-from movie_nerd.infrastructure.bootstrap.app import App
+from movie_nerd.domain.service import ChatRepository
 
-App.boot()
 service_container = ServiceContainer.get_instance()
-user = User(Identity.new(), 'dummy-name', 'dummy-name')
-service_container.get_service(UserRepository).save(user)
 clock = StubClock(datetime(2025, 3, 30, 9, 30, 0))
 
 
-def test_saved_chat_will_be_returned_with_entity():
-    chat = Chat.start(user.id, clock.now())
+def test_saved_chat_will_be_returned_with_entity(seeded_user: User):
+    chat = Chat.start(seeded_user.id, clock.now())
     sut = service_container.get_service(ChatRepository)
     sut.save(chat)
 
@@ -38,9 +34,8 @@ def test_chat_user_should_be_existed_in_db():
     persisted_chat = sut.find(chat.id)
     assert_that(persisted_chat).is_none()
 
-
-def test_chat_messages_are_persisted_with_it():
-    chat = Chat.start(user.id, clock.now())
+def test_chat_messages_are_persisted_with_it(seeded_user: User):
+    chat = Chat.start(seeded_user.id, clock.now())
     message_content = 'dummy-content'
     chat.send_user_message(message_content, clock.now())
     sut = service_container.get_service(ChatRepository)
