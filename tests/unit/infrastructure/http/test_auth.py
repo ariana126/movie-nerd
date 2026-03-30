@@ -2,6 +2,7 @@ from assertpy.assertpy import assert_that
 from fastapi.testclient import TestClient
 
 from movie_nerd.application.auth.auth_service import AuthService
+from movie_nerd.domain.value_object import Email
 from movie_nerd.infrastructure.auth import HmacTokenService, InMemoryUserStore, Pbkdf2PasswordHasher
 from movie_nerd.infrastructure.http.app_factory import create_app
 
@@ -39,7 +40,7 @@ def test_register_login_and_me_flow() -> None:
     )
     assert_that(register_response.status_code).is_equal_to(201)
 
-    stored_user = store.get_by_email(email=email)
+    stored_user = store.get_by_email(email=Email.from_string(email))
     assert_that(stored_user).is_not_none()
     assert_that(stored_user.password).is_not_equal_to(password)
     assert_that(stored_user.first_name).is_equal_to(first_name)
@@ -112,4 +113,30 @@ def test_me_with_invalid_token_returns_401() -> None:
     client, _, _ = _make_app()
     response = client.get("/me", headers={"Authorization": "Bearer invalid-token"})
     assert_that(response.status_code).is_equal_to(401)
+
+
+def test_register_invalid_email_returns_422() -> None:
+    client, _, _ = _make_app()
+    response = client.post(
+        "/auth/register",
+        json={
+            "email": "not-an-email",
+            "password": "dummy-password",
+            "first_name": "A",
+            "last_name": "B",
+        },
+    )
+    assert_that(response.status_code).is_equal_to(422)
+
+
+def test_login_invalid_email_returns_422() -> None:
+    client, _, _ = _make_app()
+    response = client.post(
+        "/auth/login",
+        json={
+            "email": "not-an-email",
+            "password": "dummy-password",
+        },
+    )
+    assert_that(response.status_code).is_equal_to(422)
 

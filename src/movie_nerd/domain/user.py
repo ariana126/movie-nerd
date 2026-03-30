@@ -5,7 +5,8 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from ddd import AggregateRoot, Identity
 
-from movie_nerd.infrastructure.persistence.sql_alchemy.orm import Base, IdentityType
+from movie_nerd.domain.value_object import Email
+from movie_nerd.infrastructure.persistence.sql_alchemy.orm import Base, EmailType, IdentityType
 
 
 class User(Base, AggregateRoot):
@@ -14,9 +15,9 @@ class User(Base, AggregateRoot):
     _id: Mapped[Identity] = mapped_column("id", IdentityType, primary_key=True)
     first_name: Mapped[str] = mapped_column("first_name", String, nullable=False)
     last_name: Mapped[str] = mapped_column("last_name", String, nullable=False)
-    email: Mapped[str] = mapped_column(
+    email: Mapped[Email] = mapped_column(
         "email",
-        String,
+        EmailType,
         nullable=False,
         unique=True,
         index=True,
@@ -27,7 +28,7 @@ class User(Base, AggregateRoot):
     def __init__(
         self,
         _id: Identity,
-        email: str,
+        email: str | Email,
         password: str,
         first_name: str,
         last_name: str,
@@ -37,5 +38,5 @@ class User(Base, AggregateRoot):
         AggregateRoot.__init__(self, _id)
         self.first_name = first_name
         self.last_name = last_name
-        self.email = email.strip().lower()
+        self.email = email if isinstance(email, Email) else Email.from_string(email)
         self.password = password

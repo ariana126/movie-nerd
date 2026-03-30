@@ -5,6 +5,7 @@ from typing import Dict
 from ddd import Identity
 
 from movie_nerd.application.auth.auth_service import UserStore
+from movie_nerd.domain.value_object import Email
 from movie_nerd.domain import User
 from movie_nerd.infrastructure.persistence.sql_alchemy.connection import Connection
 
@@ -22,12 +23,12 @@ class InMemoryUserStore(UserStore):
     def get_by_id(self, *, user_id: Identity) -> User | None:
         return self._by_id.get(user_id.as_string)
 
-    def get_by_email(self, *, email: str) -> User | None:
-        return self._by_email.get(email.strip().lower())
+    def get_by_email(self, *, email: Email) -> User | None:
+        return self._by_email.get(email.as_string)
 
     def save(self, *, user: User) -> None:
         self._by_id[user.id.as_string] = user
-        self._by_email[user.email] = user
+        self._by_email[user.email.as_string] = user
 
 
 class SQLAlchemyUserStore(UserStore):
@@ -38,7 +39,7 @@ class SQLAlchemyUserStore(UserStore):
         session = self._connection.get_session()
         return session.get(User, user_id)
 
-    def get_by_email(self, *, email: str) -> User | None:
+    def get_by_email(self, *, email: Email) -> User | None:
         if select is None:  # pragma: no cover
             raise RuntimeError("SQLAlchemy not available")
         session = self._connection.get_session()

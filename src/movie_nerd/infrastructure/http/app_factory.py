@@ -14,6 +14,7 @@ from movie_nerd.application.auth.errors import (
     InvalidToken,
     UserAlreadyExists,
 )
+from movie_nerd.domain.value_object.email import InvalidEmail
 from movie_nerd.domain import User
 
 
@@ -90,6 +91,8 @@ def create_app(*, auth_service: AuthService) -> FastAPI:
             return Response(status_code=201)
         except UserAlreadyExists:
             raise HTTPException(status_code=409, detail="User already exists")
+        except InvalidEmail:
+            raise HTTPException(status_code=422, detail="Invalid email")
 
     @app.post("/auth/login", response_model=TokenResponse)
     def login(payload: CredentialsRequest) -> TokenResponse:
@@ -98,10 +101,16 @@ def create_app(*, auth_service: AuthService) -> FastAPI:
             return TokenResponse(token=token)
         except InvalidCredentials:
             raise HTTPException(status_code=401, detail="Invalid credentials")
+        except InvalidEmail:
+            raise HTTPException(status_code=422, detail="Invalid email")
 
     @app.get("/me", response_model=UserMeResponse)
     def me(current_user: User = Depends(_require_authenticated_user)) -> UserMeResponse:
-        return UserMeResponse(email=current_user.email, first_name=current_user.first_name, last_name=current_user.last_name)
+        return UserMeResponse(
+            email=current_user.email.as_string,
+            first_name=current_user.first_name,
+            last_name=current_user.last_name,
+        )
 
     return app
 
