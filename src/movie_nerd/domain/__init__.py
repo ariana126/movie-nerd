@@ -1,3 +1,4 @@
 from .chat import ChatMessage, Chat
+from .user import User
 
-__all__ = ["ChatMessage", "Chat"]
+__all__ = ["User", "ChatMessage", "Chat"]

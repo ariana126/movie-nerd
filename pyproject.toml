@@ -10,6 +10,9 @@ dependencies = [
     "dddx",
     "python-dotenv",
     "python-json-logger",
+    "sqlalchemy",
+    "psycopg[binary]",
+    "alembic",
 ]
 
 [project.optional-dependencies]
