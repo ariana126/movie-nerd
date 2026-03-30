@@ -1,0 +1,22 @@
+[project]
+name = "movie-nerd"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.10"
+
+dependencies = [
+    "underpyx",
+    "pydmpro",
+    "dddx",
+    "python-dotenv",
+    "python-json-logger",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "assertpy",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
