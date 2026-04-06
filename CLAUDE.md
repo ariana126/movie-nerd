@@ -18,19 +18,29 @@ cp .env.example .env  # then fill in DB credentials and AUTH_SECRET
 ./scripts/run_http_server.sh
 ```
 
+## Testing Requirements
+
+### When changing production (source) code
+Always ensure test coverage exists for any changes made to production code.
+- If tests already cover the changed code, verify they still reflect the intended behavior.
+- If tests are missing or insufficient, write them before considering the task done.
+
+### When changing both production and test code
+After making changes to both production and test code, always run the full test suite to confirm everything passes before finishing.
+
 ### Run tests
 ```bash
 # All unit tests (no DB needed)
-pytest -q
+.venv/bin/pytest -q
 
 # Single test file
-pytest tests/unit/infrastructure/http/test_auth.py -q
+.venv/bin/pytest tests/unit/infrastructure/http/test_auth.py -q
 
 # Single test by name
-pytest tests/unit/application/use_case/test_start_chat.py::test_started_chat_is_saved -q
+.venv/bin/pytest tests/unit/application/use_case/test_start_chat.py::test_started_chat_is_saved -q
 
 # Integration tests (requires Postgres)
-DB_TEST_DATABASE=testdb pytest -q tests/integration
+DB_TEST_DATABASE=testdb .venv/bin/pytest -q tests/integration
 ```
 
 ### Database migrations
