@@ -18,6 +18,10 @@ cp .env.example .env  # then fill in DB credentials and AUTH_SECRET
 ./scripts/run_http_server.sh
 ```
 
+## Skills
+
+Always invoke the `test-guideline` skill before writing, reviewing, or critiquing any tests.
+
 ## Testing Requirements
 
 ### When changing production (source) code
@@ -27,6 +31,9 @@ Always ensure test coverage exists for any changes made to production code.
 
 ### When changing both production and test code
 After making changes to both production and test code, always run the full test suite to confirm everything passes before finishing.
+
+### Assertions
+Use `assertpy`'s `assert_that` for all test assertions instead of pytest's bare `assert`.
 
 ### Run tests
 ```bash
@@ -67,9 +74,3 @@ Orchestrates domain objects via use cases and services. Uses `typing.Protocol` i
 - **Auth** (`infrastructure/auth/`): `Pbkdf2PasswordHasher` (PBKDF2-HMAC-SHA256, 100k iterations). `HmacTokenService` uses a **custom signed token format** — NOT JWT: `base64url(JSON payload).base64url(HMAC-SHA256 sig)`, 1-hour expiry.
 - **Persistence** (`infrastructure/persistence/sql_alchemy/`): `SQLAlchemyBaseRepository` opens a new session per operation (no Unit of Work). Custom `TypeDecorator`s for value objects (`IdentityType`, `EmailType`) in `orm.py`.
 - **Bootstrap** (`infrastructure/bootstrap/app.py`): `App.boot()` loads `.env` and wires `pydm` (IoC container) binding repository interfaces to SQLAlchemy implementations.
-
-### Testing Conventions
-- **`assertpy`** is used for all assertions instead of bare `assert`.
-- **Test doubles** in `tests/test_double/` use `SpyEntityRepository` from `dddx` for in-memory persistence with spy assertions.
-- **Integration test isolation**: Alembic runs once per session; all table rows are deleted (reverse FK order) before each test function.
-- Integration tests auto-skip if the test DB is unreachable.
